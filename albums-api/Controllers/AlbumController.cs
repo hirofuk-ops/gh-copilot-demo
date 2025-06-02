@@ -25,8 +25,42 @@ namespace albums_api.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            return Ok();
+            var album = Album.GetById(id);
+            if (album == null)
+            {
+                return NotFound();
+            }
+            return Ok(album);
         }
 
+
+        // function that sort albums by name, artist or price
+        [HttpGet("sort")]
+        public IActionResult Sort(string sortBy)
+        {
+            var albums = Album.GetAll();
+
+            if (string.IsNullOrEmpty(sortBy))
+            {
+                return BadRequest("Sort parameter is required.");
+            }
+
+            switch (sortBy.ToLower())
+            {
+                case "name":
+                    albums = albums.OrderBy(a => a.Title).ToList();
+                    break;
+                case "artist":
+                    albums = albums.OrderBy(a => a.Artist).ToList();
+                    break;
+                case "price":
+                    albums = albums.OrderBy(a => a.Price).ToList();
+                    break;
+                default:
+                    return BadRequest("Invalid sort parameter. Use 'title', 'artist', or 'price'.");
+            }
+
+            return Ok(albums);
+        }
     }
 }

@@ -76,6 +76,35 @@ resource containerAppsEnv 'Microsoft.App/managedEnvironments@2022-03-01' = {
   }
 }
 
+// Container Regisry
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
+  name: registryName
+  location: location
+  sku: {
+    name: 'Basic'
+  }
+  properties: {
+    adminUserEnabled: true
+  }
+}
+
+// Azure Open AI resource
+resource openAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
+  name: 'openai-${uniqueSuffix}'
+  location: location
+  kind: 'OpenAI'
+  sku: {
+    name: 'S0'
+  }
+  properties: {
+    customSubDomainName: 'openai-${uniqueSuffix}'
+    publicNetworkAccess: 'Enabled'
+    networkAcls: {
+      defaultAction: 'Allow'
+    }
+  }
+}
+
 module daprStateStore 'modules/dapr-statestore.bicep' = {
   name: '${deployment().name}--dapr-statestore'
   dependsOn:[
@@ -123,6 +152,8 @@ module albumServiceCapp 'modules/container-app.bicep' = {
     registryServer: registryName
   }
 }
+
+
 
 output env array=[
   'Environment name: ${containerAppsEnv.name}'

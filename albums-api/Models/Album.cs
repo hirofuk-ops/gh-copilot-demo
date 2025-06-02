@@ -1,4 +1,5 @@
-﻿namespace albums_api.Models
+﻿
+namespace albums_api.Models
 {
     public record Album(int Id, string Title, string Artist, double Price, string Image_url)
     {
@@ -11,9 +12,21 @@
             new Album(4, "Lost in Translation", "MegaDNS", 12.99,"https://aka.ms/albums-envoylogo"),
             new Album(5, "Lock Down Your Love", "V is for VNET", 12.99, "https://aka.ms/albums-vnetlogo"),
             new Album(6, "Sweet Container O' Mine", "Guns N Probeses", 14.99, "https://aka.ms/albums-containerappslogo")
+
          };
 
             return albums;
+        }
+
+        internal static object? GetById(int id)
+        {
+            // This method should return an album by its ID.
+            var albums = GetAll();
+            if (albums == null || !albums.Any())
+            {
+                return null;
+            }
+            return albums.FirstOrDefault(a => a.Id == id);
         }
     }
 }
